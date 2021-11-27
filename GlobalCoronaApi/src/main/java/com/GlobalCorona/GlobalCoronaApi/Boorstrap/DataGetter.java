@@ -3,6 +3,7 @@ import com.GlobalCorona.GlobalCoronaApi.Models.CoronaDataModel;
 import com.GlobalCorona.GlobalCoronaApi.Repositories.CoronaDataRepo;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Component
-public class DataGetter implements CommandLineRunner {
+public class DataGetter {
 
     public static String date;
     public static String url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/";
@@ -53,17 +54,16 @@ public class DataGetter implements CommandLineRunner {
 
     }
 
-    public void setUrl(String date){
-        this.url = this.url + date;
-    }
 
     public void getData(){
         try{
+            this.url = this.url + this.date + ".csv";
+            System.out.println(this.url);
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest req = HttpRequest.newBuilder().uri(URI.create(this.url)).build();
             HttpResponse<String> httpResponse = client.send(req, HttpResponse.BodyHandlers.ofString());
             String data = httpResponse.body();
-            //System.out.println(data);
+            System.out.println(data);
             makeObjects(data);
         }
         catch(IOException | InterruptedException e){
@@ -71,10 +71,15 @@ public class DataGetter implements CommandLineRunner {
         }
     }
 
+    public static String getDate() {
+        return date;
+    }
 
-    @Override
-    public void run(String... args) throws Exception {
-        this.setUrl("10-24-2021.csv");
-        this.getData();
+    public static String getUrl() {
+        return url;
+    }
+
+    public static void setDate(String date) {
+        DataGetter.date = date;
     }
 }
