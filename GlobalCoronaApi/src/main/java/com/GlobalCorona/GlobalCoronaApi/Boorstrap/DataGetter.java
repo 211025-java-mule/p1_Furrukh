@@ -19,7 +19,6 @@ import java.util.Date;
 
 @Component
 public class DataGetter {
-
     public static String date;
     public static String url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/";
     private final CoronaDataRepo coronaDataRepo;
@@ -45,6 +44,7 @@ public class DataGetter {
                         ,Float.parseFloat(record.get("Active") != "" ? record.get("Active") : "0.0"),
                         Float.parseFloat(record.get("Case_Fatality_Ratio") != "" ? record.get("Case_Fatality_Ratio") : "0.0"));
                 //System.out.println(obj.toString());
+                obj.setDate(this.date);
                 coronaDataRepo.save(obj);
             }
         }
@@ -57,10 +57,11 @@ public class DataGetter {
 
     public void getData(){
         try{
-            this.url = this.url + this.date + ".csv";
+            String tempUrl = this.url;
+            tempUrl = this.url + this.date + ".csv";
             System.out.println(this.url);
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(this.url)).build();
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(tempUrl)).build();
             HttpResponse<String> httpResponse = client.send(req, HttpResponse.BodyHandlers.ofString());
             String data = httpResponse.body();
             System.out.println(data);

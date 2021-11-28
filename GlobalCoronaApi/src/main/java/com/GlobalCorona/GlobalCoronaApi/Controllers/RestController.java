@@ -27,12 +27,22 @@ public class RestController {
     }
 
     @GetMapping(
+            path = "/CountryAndDate",
+            produces = "application/json"
+    )
+    public List<CoronaDataModel> getCountryWithDate(@RequestParam String country,@RequestParam String date){
+        List<CoronaDataModel> allRows = new ArrayList<>();
+        allRows = coronaDataRepo.findAllByDateAndCountry(country,date);
+        return allRows;
+    }
+
+    @GetMapping(
             path = "/Country",
             produces = "application/json"
     )
     public List<CoronaDataModel> getCountry(@RequestParam String country){
         List<CoronaDataModel> allRows = new ArrayList<>();
-        allRows = coronaDataRepo.findByCountry(country);
+        allRows = coronaDataRepo.findAllByCountry(country);
         return allRows;
     }
 
@@ -40,9 +50,9 @@ public class RestController {
             path = "/allCountries",
             produces = "application/json"
     )
-    public List<CoronaDataModel> getAllCountriesDate(){
+    public List<CoronaDataModel> getAllCountriesDate(@RequestParam String date){
         List<CoronaDataModel> allRows = new ArrayList<>();
-        allRows = coronaDataRepo.findAll();
+        allRows = coronaDataRepo.findAllByDate(date);
         return allRows;
     }
 
@@ -54,8 +64,14 @@ public class RestController {
             Gson gson = new Gson();
             DateSetter data = gson.fromJson(json, DateSetter.class);
             this.dataGetter.setDate(data.getDate());
-            System.out.println(dataGetter.getDate());
-            dataGetter.getData();
+            //List<CoronaDataModel> allRows = new ArrayList<>();
+            Integer x = coronaDataRepo.findDate(data.getDate());
+            if(x  == 0){
+                dataGetter.getData();
+            }
+
+
+
     }
 
 

@@ -13,6 +13,7 @@ public class CoronaDataModel {
 
     String Province_State;
     String Country_Region;
+    String date;
     Date Last_Update;
     Float Confirmed;
     Float Deaths;
@@ -100,6 +101,18 @@ public class CoronaDataModel {
 
     public void setConfirmed(Float confirmed) {
         Confirmed = confirmed;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setCase_Fatality_ratio(Float case_Fatality_ratio) {
+        Case_Fatality_ratio = case_Fatality_ratio;
     }
 
     public Float getDeaths() {
