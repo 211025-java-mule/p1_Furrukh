@@ -56,6 +56,38 @@ public class DataHandler {
         return x;
 
     }
+    public List<CoronaData> getSingleCountry(String date,String countryName){
+
+        try{
+            HttpGet httpGet = new HttpGet("http://localhost:8080/GlobalCorona/CountryAndDate");
+            HttpClient client = HttpClient.newHttpClient();
+            URI uri = new URIBuilder(httpGet.getURI())
+                    .addParameter("country",countryName)
+                    .addParameter("date", date)
+                    .build();
+            HttpRequest req = HttpRequest.newBuilder().uri(uri).build();
+            HttpResponse<String> httpResponse = client.send(req, HttpResponse.BodyHandlers.ofString());
+            String data = httpResponse.body();
+            List<CoronaData> listObjects = new ArrayList<CoronaData>();
+            JSONArray jsonArray = new JSONArray(data);
+            Gson gson = new GsonBuilder().create();
+            for(int x = 0;x<jsonArray.length();x++){
+                JSONObject obj = jsonArray.getJSONObject(x);
+                System.out.println(obj);
+                CoronaData cD = gson.fromJson(String.valueOf(obj),CoronaData.class);
+                listObjects.add(cD);
+            }
+
+
+            return listObjects;
+        }
+        catch(IOException | InterruptedException | URISyntaxException | JSONException e){
+            e.printStackTrace();
+        }
+        List<CoronaData> x = new ArrayList<CoronaData>();
+        return x;
+
+    }
 
 
 }

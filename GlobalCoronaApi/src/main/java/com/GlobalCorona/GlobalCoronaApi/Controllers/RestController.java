@@ -5,6 +5,8 @@ import com.GlobalCorona.GlobalCoronaApi.Json.DateSetter;
 import com.GlobalCorona.GlobalCoronaApi.Models.CoronaDataModel;
 import com.GlobalCorona.GlobalCoronaApi.Repositories.CoronaDataRepo;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/GlobalCorona/")
 public class RestController {
 
+    Logger logger = LoggerFactory.getLogger(RestController.class);
     DataGetter dataGetter;
     CoronaDataRepo coronaDataRepo;
 
@@ -31,7 +34,14 @@ public class RestController {
             produces = "application/json"
     )
     public List<CoronaDataModel> getCountryWithDate(@RequestParam String country,@RequestParam String date){
+        logger.info("Request Received at /CountryAndDate");
         List<CoronaDataModel> allRows = new ArrayList<>();
+        this.dataGetter.setDate(date);
+        Integer x = coronaDataRepo.findDate(date);
+        if(x  == 0){
+            dataGetter.getData();
+            System.out.println("i am here!");
+        }
         allRows = coronaDataRepo.findAllByDateAndCountry(country,date);
         return allRows;
     }
@@ -41,6 +51,7 @@ public class RestController {
             produces = "application/json"
     )
     public List<CoronaDataModel> getCountry(@RequestParam String country){
+        logger.info("Request Received at /Country");
         List<CoronaDataModel> allRows = new ArrayList<>();
         allRows = coronaDataRepo.findAllByCountry(country);
         return allRows;
@@ -51,7 +62,15 @@ public class RestController {
             produces = "application/json"
     )
     public List<CoronaDataModel> getAllCountriesDate(@RequestParam String date){
+        logger.info("Request Received at /allCountries");
         List<CoronaDataModel> allRows = new ArrayList<>();
+        this.dataGetter.setDate(date);
+
+        Integer x = coronaDataRepo.findDate(date);
+        if(x  == 0){
+            dataGetter.getData();
+            System.out.println("i am here!");
+        }
         allRows = coronaDataRepo.findAllByDate(date);
         return allRows;
     }
@@ -61,10 +80,10 @@ public class RestController {
             produces = "application/json"
     )
     public void setDate(@RequestBody String json){
+        logger.info("Request Received at /setDate");
             Gson gson = new Gson();
             DateSetter data = gson.fromJson(json, DateSetter.class);
             this.dataGetter.setDate(data.getDate());
-            //List<CoronaDataModel> allRows = new ArrayList<>();
             Integer x = coronaDataRepo.findDate(data.getDate());
             if(x  == 0){
                 dataGetter.getData();

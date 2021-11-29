@@ -3,6 +3,8 @@ import com.GlobalCorona.GlobalCoronaApi.Models.CoronaDataModel;
 import com.GlobalCorona.GlobalCoronaApi.Repositories.CoronaDataRepo;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,8 @@ import java.util.Date;
 
 @Component
 public class DataGetter {
-    public static String date;
+    Logger logger = LoggerFactory.getLogger(DataGetter.class);
+    public String date;
     public static String url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/";
     private final CoronaDataRepo coronaDataRepo;
 
@@ -46,10 +49,12 @@ public class DataGetter {
                 //System.out.println(obj.toString());
                 obj.setDate(this.date);
                 coronaDataRepo.save(obj);
+                logger.info("CoronaDataObject stored in DB");
             }
         }
         catch(IOException | ParseException e){
             e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
     }
@@ -58,21 +63,23 @@ public class DataGetter {
     public void getData(){
         try{
             String tempUrl = this.url;
-            tempUrl = this.url + this.date + ".csv";
-            System.out.println(this.url);
+            System.out.println(this.date);
+            tempUrl = tempUrl + this.date + ".csv";
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest req = HttpRequest.newBuilder().uri(URI.create(tempUrl)).build();
             HttpResponse<String> httpResponse = client.send(req, HttpResponse.BodyHandlers.ofString());
             String data = httpResponse.body();
             System.out.println(data);
             makeObjects(data);
+            logger.info("Request sent to github repo of corona data dump");
         }
         catch(IOException | InterruptedException e){
             e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
-    public static String getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -80,7 +87,7 @@ public class DataGetter {
         return url;
     }
 
-    public static void setDate(String date) {
-        DataGetter.date = date;
+    public void setDate(String date) {
+        this.date = date;
     }
 }

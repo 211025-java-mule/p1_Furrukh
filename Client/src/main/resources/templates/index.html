@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Spring Boot Form Demo</title>
+</head>
+<body>
+<div align="center">
+    <h1>Welcome to Global Corona Database</h1>
+    <h2>Please select a date to retrieve data</h2>
+    <label for="start">Start date:</label>
+    <form method = "post" action = "/Home/data">
+        <input type="date" id="start" name="date"
+               value="2018-07-22"
+               min="2020-01-01" max="2021-12-31">
+        <input type = "submit">
+    </form>
+    <h2>Or -- Please select a date AND country to retrieve data</h2>
+    <form method = "post" action = "/Home/countryData">
+        <input type="date" id="start2" name="date"
+               value="2018-07-22"
+               min="2020-01-01" max="2021-12-31">
+        <label for="fname">Country Name:</label>
+        <input type="text" id="fname" name="country">
+        <input type = "submit">
+    </form>
+
+
+</div>
+</body>
+</html>

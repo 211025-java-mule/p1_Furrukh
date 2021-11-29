@@ -3,29 +3,39 @@ package com.CoronaGlobalClient.Client.Controller;
 import com.CoronaGlobalClient.Client.Handler.DataHandler;
 import com.CoronaGlobalClient.Client.JsonObjects.CoronaData;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Controller
 @RestController
-@RequestMapping("/Main")
+@RequestMapping("/Home")
 public class MainController {
-
-    @GetMapping(
+    @PostMapping(
             path = "/data",
             produces = "application/json"
     )
-    public List<CoronaData> getData(@RequestParam String date){
+    public List<CoronaData> getData(@RequestParam String date) throws ParseException {
         DataHandler dataHandler = new DataHandler();
-        return dataHandler.getDataAllCountries(date);
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat myFormat = new SimpleDateFormat("MM-dd-yyyy");
+        String reformattedStr = myFormat.format(fromUser.parse(date));
+
+        return dataHandler.getDataAllCountries(reformattedStr);
     }
-    public List<CoronaData> getData(@RequestParam String date, @RequestParam String country){
+    @PostMapping(
+            path = "countryData",
+            produces = "application/json"
+    )
+    public List<CoronaData> getData(@RequestParam String date, @RequestParam String country) throws ParseException {
         DataHandler dataHandler = new DataHandler();
-        return dataHandler.getDataAllCountries(date);
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat myFormat = new SimpleDateFormat("MM-dd-yyyy");
+        String reformattedStr = myFormat.format(fromUser.parse(date));
+        System.out.println(date +  " " + country);
+        return dataHandler.getSingleCountry(reformattedStr,country);
     }
 
 
